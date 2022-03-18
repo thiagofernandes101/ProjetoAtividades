@@ -19,3 +19,7 @@ Criação de uma aplicação React Native que possua as seguintes característic
 - A tela inicial da aplicação deve exibir inicialmente todas as atividades pendentes, além de botões para acesso às telas de CRUD
 - Deve existir um filtro na tela inicial para exibir para exibir atividades concluídas / pendentes / todas
 - A tela inicial deve permitir que a atividade selecionada tenha seu status alterado para "concluída"
+
+## Desenvolvedores
+- Jhonatan Candido Matos
+- Thiago Lemes Fernandes
