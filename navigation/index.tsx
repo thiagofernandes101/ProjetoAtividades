@@ -14,6 +14,7 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme'; 
 import ModalScreen from '../screens/ModalScreen';
 import CreateScreen from '../screens/ActivityCreateScreen';
+import EditScreen from '../screens/ActivityEditScreen';
 import DetailScreen from '../screens/ActivityDetailScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import TabOneScreen from '../screens/ActivityScreen';
@@ -43,6 +44,7 @@ function RootNavigator() {
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Screen name="ActivityCreate" component={CreateScreen} options={{ title: 'Criação de Atividades' }}/>
+      <Stack.Screen name="ActivityEdit" component={EditScreen} options={{ title: 'Alteração da Atividade' }}/>
       <Stack.Screen name="ActivityDetail" component={DetailScreen} options={{ title: 'Detalhes da Atividade' }}/>
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />

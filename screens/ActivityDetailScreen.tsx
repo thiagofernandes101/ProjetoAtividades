@@ -6,9 +6,12 @@ import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 
 export default function CreateScreen({ navigation }: RootTabScreenProps<'Activity'>) {    
+    const [atividades, setAtividades] = useState([]);
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Detalhes da Atividade</Text>
+
+            atividades.map((atividade, index) => (
 
             <View style={styles.cadastroAtividade}>
                 <View style={styles.campo}> 
@@ -26,6 +29,7 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
                 onPress={() => navigation.navigate('Activity')}>
                 <Text style={styles.legendaCadastro}>Voltar</Text>
             </TouchableOpacity>
+            ))
         </View>
     );
 }

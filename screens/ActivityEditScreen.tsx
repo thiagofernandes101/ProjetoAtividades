@@ -1,76 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Alert, Keyboard, Platform, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
 
-import {    
-    insertActivity,    
-} from '../services/ActivityDatabaseService';
-
 export default function CreateScreen({ navigation }: RootTabScreenProps<'Activity'>) {
-    const [id, setId] = useState("");
+    const [id, setId] = useState();
     const [descricao, setDescricao] = useState("");
     const [local, setLocal] = useState("");
     const [tipoAtividade, setTipoAtividade] = useState("");
     const [data, setData] = useState("");
     const [statusAtividade, setStatusAtividade] = useState("");
-    //const [atividades, setAtividades] = useState([]);
-    //const [recarregaTela, setRecarregaTela] = useState(true);
-    //const [criarTabela, setCriarTabela] = useState(false);
-
-
-    function createUniqueId() {
-        let a = Date.now().toString(36) + Math.random().toString(36).slice(0, 2);
-        console.log(a)
-        return Date.now().toString(36) + Math.random().toString(36).slice(0, 2);
-    }
-
-
-    async function salvaDados() {
-        let novoRegistro = false;
-        let identificador = id;
-
-        if (!identificador) {
-            identificador = createUniqueId();
-            novoRegistro = true;
-        }
-
-        let obj = {
-            id: identificador,
-            descricao: descricao,
-            local: local,
-            tipoAtividade: tipoAtividade,
-            data: data,
-            statusAtividade: statusAtividade,
-        };
-
-        try {
-            if (novoRegistro) {
-                let resposta = (await insertActivity(obj));
-                if (resposta) {
-                    Alert.alert('Registro Adicionado!');
-                }
-                else {
-                    Alert.alert('Erro ao adicionar registro!');
-                }
-            }
-            else {
-                Alert.alert('Atividade já existe!');
-            }
-
-            Keyboard.dismiss();
-            //setRecarregaTela(true);
-            navigation.navigate('Activity')
-        } catch (e) {
-            Alert.alert("erro");
-        }
-    }
-
+    
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>Editar Atividade</Text>
 
             <View style={styles.cadastroAtividade}>
                 <View style={styles.campo}>
@@ -118,7 +64,7 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
 
                 <View style={styles.areaBotoes}>
                     <TouchableOpacity style={styles.botaoSalvar}
-                        onPress={() => salvaDados()}>
+                        >
                         <Text style={styles.legendaCadastro}>Salvar</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.botaoVoltar}
@@ -142,7 +88,7 @@ const styles = StyleSheet.create({
         //marginTop: 10
     },
     texto: {
-        paddingHorizontal: 10,
+        paddingHorizontal: 10
     },
     title: {
         textAlignVertical: "center",
@@ -210,7 +156,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         textAlign: 'center',
         alignSelf: 'center',
-        color: "white",
     },
 
     separator: {

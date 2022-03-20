@@ -1,31 +1,94 @@
-import { useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import {Picker} from '@react-native-community/picker';
+import { useEffect, useState } from 'react';
+import { ScrollView, StyleSheet, TouchableOpacity, TextInput, Alert, Keyboard } from 'react-native';
+import { Picker } from '@react-native-community/picker';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
+import {
+  createTable,
+  deleteActivity,
+  GetAllActivities,
+} from '../services/ActivityDatabaseService';
 
 export default function ActivityScreen({ navigation }: RootTabScreenProps<'Activity'>) {
-  const [selectedValue, setSelectedValue] = useState("java");
+  const [selectedValue, setSelectedValue] = useState("JavaScript");
+  const [descricao, setDescricao] = useState("");
+  const [atividades, setAtividades] = useState([]);
+  const [recarregaTela, setRecarregaTela] = useState(true);
+  const [criarTabela, setCriarTabela] = useState(false);
+
+  async function processamentoUseEffect() {
+    if (!criarTabela) {
+      console.log("Verificando necessidade de criar tabelas...");
+      setCriarTabela(true);
+      await createTable();
+    }
+    if (recarregaTela) {
+      console.log("Recarregando dados...");
+      await carregaDados();
+    }
+  }
+
+  useEffect(
+    () => {
+      console.log('executando useffect');
+      processamentoUseEffect(); //necessário método pois aqui não pode utilizar await...
+    }, [recarregaTela]);
+
+  async function carregaDados() {
+    try {      
+      let atividades : any = await GetAllActivities();      
+      setAtividades(atividades);
+      setRecarregaTela(false);
+    } catch (e) {
+      Alert.alert("e.toString()");
+    }
+  }
+
+  function removerElemento(identificador: any) {
+    Alert.alert('Cuidado', 'Deseja exluir o registro?',
+      [
+        {
+          text: 'Sim',
+          onPress: () => efetivaRemoverContato(identificador),
+        },
+        {
+          text: 'Não',
+          style: 'cancel',
+        }
+      ]);
+  }
+
+  async function efetivaRemoverContato(identificador: any) {
+    try {
+      await deleteActivity(identificador);
+      Keyboard.dismiss();
+      //limparCampos();
+      setRecarregaTela(true);
+      Alert.alert('Contato apagado com sucesso!!!');
+    } catch (e) {
+      Alert.alert(e);
+    }
+  }
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Atividades</Text>
+      
       <View style={styles.areaFiltro}>
         <View style={styles.areaTituloFiltro}>
-          <Text style={styles.tituloFiltro}>Filtro</Text>
+          <Text style={styles.tituloFiltro}>Filtro</Text>          
         </View>
         <View style={styles.areaConteudoFiltro}>
           <View style={styles.areaStatus}>
             <Text style={styles.legendaStatus}>Status</Text>
-            <Picker 
+            <Picker
               selectedValue={selectedValue}
               style={styles.dropDown}
-              //onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+            //onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
             >
-              <Picker.Item label="Selecione um status" value="1" />
-              <Picker.Item label="Java" value="2" />
-              <Picker.Item label="JavaScript" value="3" />
+              <Picker.Item label="Selecione um status" value="0" />
+              <Picker.Item label="Java" value="Java" />
+              <Picker.Item label="JavaScript" value="JavaScript" />
             </Picker>
-            
+
           </View>
           <TouchableOpacity style={styles.botaoNovaAtividade}
             onPress={() => navigation.navigate('ActivityCreate')}>
@@ -35,57 +98,42 @@ export default function ActivityScreen({ navigation }: RootTabScreenProps<'Activ
         </View>
       </View>
       <ScrollView style={styles.listaAtividades}>
-        <View style={styles.areaAtividade}>
-          <Text style={styles.tituloAtividade}>Tipo de Atividade</Text>
-          <Text style={styles.legendaAtividade}>Descrição da atividade</Text>
-          <View style={styles.areaCheckBox}>
-            <Text style={styles.checkBox}> </Text>
-            <Text>Concluir atividade</Text>
-          </View>
-          <View style={styles.areaBotoes}>
-            <TouchableOpacity style={styles.botaoEditar}
-              onPress={() => navigation.navigate('ActivityCreate')}>
-              <Text style={styles.legendaCadastro}>Editar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.botaoExcluir}>
-              <Text style={styles.legendaCadastro}>Excluir</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.botaoInfo}
-              onPress={() => navigation.navigate('ActivityDetail')}>
-              <Text style={styles.legendaCadastro}>Info</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.areaAtividade}>
-          <Text style={styles.tituloAtividade}>Tipo de Atividade</Text>
-          <Text style={styles.legendaAtividade}>Descrição da atividade</Text>
-          <View style={styles.areaCheckBox}>
-            <Text style={styles.checkBox}> </Text>
-            <Text>Concluir atividade</Text>
-          </View>
-          <View style={styles.areaBotoes}>
-            <TouchableOpacity style={styles.botaoEditar}>
-              <Text style={styles.legendaCadastro}>Editar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.botaoExcluir}>
-              <Text style={styles.legendaCadastro}>Excluir</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.botaoInfo}>
-              <Text style={styles.legendaCadastro}>Info</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
+        {
+          atividades.map((atividade, index) => (
+            <><View style={styles.areaAtividade} key={index.toString()}>
+              <Text style={styles.tituloAtividade}>{atividade.tipoAtividade}</Text>
+              <Text style={styles.legendaAtividade}>{atividade.descricao} Descrição da atividade</Text>
+              <View style={styles.areaCheckBox}>
+                <Text style={styles.checkBox}> </Text>
+                <Text>Concluir atividade</Text>
+              </View>
+              <View style={styles.areaBotoes}>
+                <TouchableOpacity style={styles.botaoEditar}
+                  onPress={() => navigation.navigate('ActivityEdit')}>
+                  <Text style={styles.legendaCadastro}>Editar</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.botaoExcluir}
+                onPress={() => removerElemento(atividade.id)}>
+                  <Text style={styles.legendaCadastro}>Excluir</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.botaoInfo}
+                  onPress={() => navigation.navigate('ActivityDetail')}>
+                  <Text style={styles.legendaCadastro}>Info</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            </>
+          ))
+        }
       </ScrollView>
-
     </View>
-
-
   );
 }
 
 const styles = StyleSheet.create({
   //<View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
   //<EditScreenInfo path="/screens/ActivityScreen.tsx" />
+  //<Text style={styles.title}>Atividades</Text>
   container: {
     flex: 1,
     alignItems: 'center',
