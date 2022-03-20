@@ -17,7 +17,7 @@ import CreateScreen from '../screens/ActivityCreateScreen';
 import DetailScreen from '../screens/ActivityDetailScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import TabOneScreen from '../screens/ActivityScreen';
-import TabTwoScreen from '../screens/ActivityTypeScreen';
+import TabTwoScreen from '../screens/ActivityTypeScreen'; 
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
