@@ -14,16 +14,17 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/ActivityScreen';
-import TabTwoScreen from '../screens/ActivityTypeScreen';
+import ActivityScreen from '../screens/ActivityScreen';
+import ActivityTypeScreen from '../screens/ActivityTypeScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import CreateNewActivityTypeScreen from '../screens/CreateNewActivityTypeScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
     <NavigationContainer
       linking={LinkingConfiguration}
-      theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      theme={DefaultTheme}>
       <RootNavigator />
     </NavigationContainer>
   );
@@ -40,6 +41,7 @@ function RootNavigator() {
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      <Stack.Screen name="CreateNewActivityType" component={CreateNewActivityTypeScreen} options={{ title: 'Criar tipo de atividade' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -57,6 +59,7 @@ function BottomTabNavigator() {
   const colorScheme = useColorScheme();
 
   return (
+
     <BottomTab.Navigator
       initialRouteName="Activity"
       screenOptions={{
@@ -64,32 +67,18 @@ function BottomTabNavigator() {
       }}>
       <BottomTab.Screen
         name="Activity"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'Activity'>) => ({
+        component={ActivityScreen}
+        options={{
           title: 'Atividades',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Pressable
-              onPress={() => navigation.navigate('Modal')}
-              style={({ pressed }) => ({
-                opacity: pressed ? 0.5 : 1,
-              })}>
-              <FontAwesome
-                name="info-circle"
-                size={25}
-                color={Colors[colorScheme].text}
-                style={{ marginRight: 15 }}
-              />
-            </Pressable>
-          ),
-        })}
+          tabBarIcon: ({ color }) => <TabBarIcon name="stack-exchange" color={color} />,
+        }}
       />
       <BottomTab.Screen
         name="ActivityType"
-        component={TabTwoScreen}
+        component={ActivityTypeScreen}
         options={{
           title: 'Tipo de atividade',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="pencil-square-o" color={color} />,
         }}
       />
     </BottomTab.Navigator>
