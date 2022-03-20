@@ -8,7 +8,7 @@ import { RootTabScreenProps } from '../types';
 
 export default function CreateScreen({ navigation }: RootTabScreenProps<'Activity'>) {
     const [descricao, setDescricao] = useState("");
-    const [local, setLocal] = useState("");
+    const [local, setLocal] = useState(""); 
     const [tipoAtividade, settipoAtividade] = useState("");
     const [data, setData] = useState("");
     const [statusAtividade, setStatusAtividade] = useState("");

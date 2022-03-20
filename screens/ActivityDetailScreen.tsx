@@ -11,7 +11,7 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
             <Text style={styles.title}>Detalhes da Atividade</Text>
 
             <View style={styles.cadastroAtividade}>
-                <View style={styles.campo}>
+                <View style={styles.campo}> 
                     <Text style={styles.tipoAtividade}>Tipo de Atividade</Text>
                     <Text style={styles.texto}>Descrição da atividade
                     </Text>

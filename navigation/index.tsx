@@ -11,7 +11,7 @@ import * as React from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
 
 import Colors from '../constants/Colors';
-import useColorScheme from '../hooks/useColorScheme';
+import useColorScheme from '../hooks/useColorScheme'; 
 import ModalScreen from '../screens/ModalScreen';
 import CreateScreen from '../screens/ActivityCreateScreen';
 import DetailScreen from '../screens/ActivityDetailScreen';
