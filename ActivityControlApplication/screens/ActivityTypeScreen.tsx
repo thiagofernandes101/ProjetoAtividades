@@ -50,7 +50,6 @@ export default function ActivityTypeScreen({ navigation }: RootTabScreenProps<'A
 
   async function findAllActivitiesTypes() {
     let activitiesTypes: ActivityTypeModel[] = await ActivityTypeDatabaseService.findAll();
-    console.log(activitiesTypes);
     return activitiesTypes
   }
 

@@ -18,8 +18,6 @@ export default class ActivityTypeDatabaseService {
                 values (?, ?)`,
                     [param.activityType, param.description],
                     (_, { insertId, rows }) => {
-                        console.log(`id insert: ${insertId}`);
-                        console.log(`rows: ${rows}`);
                         resolve(insertId);
                     }), (sqlError: SQLError) => {
                         console.log(sqlError);
@@ -37,8 +35,6 @@ export default class ActivityTypeDatabaseService {
                 where id = ?`,
                     [param.activityType, param.description, param.id],
                     (_, { insertId, rows }) => {
-                        console.log(`id updated: ${insertId}`);
-                        console.log(`rows: ${rows}`);
                         resolve(insertId);
                     }), (sqlError: SQLError) => {
                         console.log(sqlError);
