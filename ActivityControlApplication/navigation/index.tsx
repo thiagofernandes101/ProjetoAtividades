@@ -19,6 +19,8 @@ import ActivityTypeScreen from '../screens/ActivityTypeScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import CreateNewActivityTypeScreen from '../screens/CreateNewActivityTypeScreen';
+import EditActivityTypeScreen from '../screens/EditActivityType';
+import ActivityTypeDetails from '../screens/ActivityTypeDetails';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -42,6 +44,8 @@ function RootNavigator() {
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Screen name="CreateNewActivityType" component={CreateNewActivityTypeScreen} options={{ title: 'Criar tipo de atividade' }} />
+      <Stack.Screen name="EdityActivityType" component={EditActivityTypeScreen} options={{title: 'Editar tipo de atividade'}} />
+      <Stack.Screen name="ActivityTypeDetails" component={ActivityTypeDetails} options={{title: 'Detalhes do tipo de atividade'}} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>

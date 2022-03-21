@@ -11,14 +11,12 @@ export default class DatabaseInitialization {
         this.InitializeDatabase();
     }
 
-    private InitializeDatabase() {
+    private async InitializeDatabase() {
         let sqlCommands: string[] = [
-            `drop table if exists ActivityType;`,
-            `drop table if exists Activity;`,
-
             `create table if not exists ActivityType (
                 id integer primary key autoincrement,
-                activityType text
+                activityType text,
+                description text
             );`,
 
             `create table if not exists Activity (
@@ -28,7 +26,7 @@ export default class DatabaseInitialization {
                 activityPremise text,
                 committalDate text,
                 committalHour text,
-                activityStatus int
+                activityStatus int,
                 foreign key (activityType) references ActivityType (id)
             );`,
         ];

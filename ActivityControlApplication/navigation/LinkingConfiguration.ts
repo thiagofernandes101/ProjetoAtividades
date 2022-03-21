@@ -29,6 +29,9 @@ const linking: LinkingOptions<RootStackParamList> = {
       },
       Modal: 'modal',
       NotFound: '*',
+      CreateNewActivityType: 'createNewActivityType',
+      EdityActivityType: 'editActivityType',
+      ActivityTypeDetails: 'activityTypeDetails'
     },
   },
 };
