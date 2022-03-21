@@ -5,9 +5,11 @@ import { Alert, Keyboard, Platform, StyleSheet, TextInput, TouchableOpacity } fr
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
+import { Picker } from '@react-native-community/picker';
 
-import {    
-    insertActivity,    
+import {
+    GetAllActivities,
+    insertActivity,
 } from '../services/ActivityDatabaseService';
 
 export default function CreateScreen({ navigation }: RootTabScreenProps<'Activity'>) {
@@ -17,10 +19,10 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
     const [tipoAtividade, setTipoAtividade] = useState("");
     const [data, setData] = useState("");
     const [statusAtividade, setStatusAtividade] = useState("");
-    //const [atividades, setAtividades] = useState([]);
-    //const [recarregaTela, setRecarregaTela] = useState(true);
-    //const [criarTabela, setCriarTabela] = useState(false);
-
+    const [atividades, setAtividades] = useState([]);
+    const [recarregaTela, setRecarregaTela] = useState(true);
+    const [criarTabela, setCriarTabela] = useState(false);
+    const [selectedValue, setSelectedValue] = useState("0");
 
     function createUniqueId() {
         let a = Date.now().toString(36) + Math.random().toString(36).slice(0, 2);
@@ -28,6 +30,27 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
         return Date.now().toString(36) + Math.random().toString(36).slice(0, 2);
     }
 
+    async function processamentoUseEffect() {
+        if (recarregaTela) {
+            console.log("Recarregando dados...");
+            await carregaDados();
+        }
+    }
+
+    useEffect(
+        () => {
+            console.log('executando useffect');
+            processamentoUseEffect(); //necessário método pois aqui não pode utilizar await...
+        }, [recarregaTela]);
+
+    async function Cancelar() {
+        setData("");
+        setDescricao("");
+        setStatusAtividade("");
+        setTipoAtividade("");
+        setLocal("");
+        Keyboard.dismiss();
+    }
 
     async function salvaDados() {
         let novoRegistro = false;
@@ -46,7 +69,6 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
             data: data,
             statusAtividade: statusAtividade,
         };
-
         try {
             if (novoRegistro) {
                 let resposta = (await insertActivity(obj));
@@ -62,10 +84,21 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
             }
 
             Keyboard.dismiss();
-            //setRecarregaTela(true);
-            navigation.navigate('Activity')
+            //carregaDados();
+            //navigation.navigate('Activity')
         } catch (e) {
             Alert.alert("erro");
+        }
+    }
+
+    async function carregaDados() {
+        try {
+            let atividades: any = await GetAllActivities();
+            setAtividades(atividades);
+            console.log(atividades)
+            setRecarregaTela(true);
+        } catch (e) {
+            Alert.alert("e.toString()");
         }
     }
 
@@ -83,19 +116,27 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
                 </View>
                 <View style={styles.campo}>
                     <Text style={styles.texto}>Tipo de Atividade</Text>
-                    <TextInput
+                    <Picker
+                        selectedValue={tipoAtividade}
                         style={styles.dropDown}
-                        onChangeText={(texto) => setTipoAtividade(texto)}
-                        value={tipoAtividade}
-                    />
+                        onValueChange={(itemValue : any, itemIndex) => setTipoAtividade(itemValue)}
+                    >
+                        <Picker.Item label="Selecione o Tipo da Atividade" value="0" />
+                        <Picker.Item label="N1" value="1" />
+                        <Picker.Item label="N2" value="2" />
+                    </Picker>
                 </View>
                 <View style={styles.campo}>
                     <Text style={styles.texto}>Local da Atividade</Text>
-                    <TextInput
+                    <Picker
+                        selectedValue={local}
                         style={styles.dropDown}
-                        onChangeText={(texto) => setLocal(texto)}
-                        value={local}
-                    />
+                        onValueChange={(itemValue  : any, itemIndex2) => setLocal(itemValue)}
+                    >
+                        <Picker.Item label="Selecione o Local da Atividade" value="0" />
+                        <Picker.Item label="Sala" value="1" />
+                        <Picker.Item label="Laboratório" value="2" />
+                    </Picker>
                 </View>
                 <View style={styles.campo}>
                     <Text style={styles.texto}>Data de Entrega</Text>
@@ -108,11 +149,15 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
 
                 <View style={styles.campo}>
                     <Text style={styles.texto}>Status</Text>
-                    <TextInput
+                    <Picker
+                        selectedValue={statusAtividade}
                         style={styles.dropDown}
-                        onChangeText={(texto) => setStatusAtividade(texto)}
-                        value={statusAtividade}
-                    />
+                        onValueChange={(itemValue  : any, itemIndex) => setStatusAtividade(itemValue)}
+                    >
+                        <Picker.Item label="Selecione o Status da Atividade" value="0" />
+                        <Picker.Item label="Pendente" value="1" />
+                        <Picker.Item label="Concluído" value="2" />
+                    </Picker>
                 </View>
 
 
@@ -125,7 +170,8 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
                         onPress={() => navigation.navigate('Activity')}>
                         <Text style={styles.legendaCadastro}>Voltar</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.botaoCancelar}>
+                    <TouchableOpacity style={styles.botaoCancelar}
+                        onPress={() => Cancelar()}>
                         <Text style={styles.legendaCadastro}>Cancelar</Text>
                     </TouchableOpacity>
                 </View>
@@ -200,7 +246,7 @@ const styles = StyleSheet.create({
         height: 50,
         borderWidth: 1,
         fontSize: 20,
-        backgroundColor: 'black',
+        //backgroundColor: 'black',
         paddingHorizontal: 10,
         width: "100%",
         textAlignVertical: "center",
@@ -210,7 +256,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         textAlign: 'center',
         alignSelf: 'center',
-        color: "white",
+        //color: "white",
     },
 
     separator: {

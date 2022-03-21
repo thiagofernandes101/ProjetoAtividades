@@ -1,35 +1,71 @@
+import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { StyleSheet, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
+import { getActivityById, GetAllActivities } from '../services/ActivityDatabaseService';
 import { RootTabScreenProps } from '../types';
 
-export default function CreateScreen({ navigation }: RootTabScreenProps<'Activity'>) {    
+export default function DetailScreen({ navigation, route }: RootTabScreenProps<'ActivityDetail'>) {
     const [atividades, setAtividades] = useState([]);
+    const [descricao, setDescricao] = useState("");
+    const [local, setLocal] = useState("");
+    const [tipoAtividade, setTipoAtividade] = useState("");
+    const [data, setData] = useState("");
+    const [statusAtividade, setStatusAtividade] = useState("");
+    const [recarregaTela, setRecarregaTela] = useState(true);
+    let itemId = route.params
+
+    async function processamentoUseEffect() {
+        if (recarregaTela) {
+            //console.log("Recarregando dados...");
+            await carregaDados(itemId);
+        }
+    }
+
+    useEffect(
+        () => {
+            //console.log('executando useffect');
+            processamentoUseEffect(); //necessário método pois aqui não pode utilizar await...
+        }, [recarregaTela]);
+
+    async function carregaDados(identificador: any) {
+        try {
+            console.log(identificador)
+            let atividades: any = await getActivityById(identificador);
+            setAtividades(atividades);
+            setDescricao(atividades[0].descricao)
+            setLocal(atividades[0].local)
+            setTipoAtividade(atividades[0].tipoAtividade)
+            setData(atividades[0].data)            
+            setRecarregaTela(true);
+        } catch (e: any) {
+            Alert.alert(e.toString());
+        }
+    }
+
+
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Detalhes da Atividade</Text>
-
-            atividades.map((atividade, index) => (
-
-            <View style={styles.cadastroAtividade}>
-                <View style={styles.campo}> 
-                    <Text style={styles.tipoAtividade}>Tipo de Atividade</Text>
-                    <Text style={styles.texto}>Descrição da atividade
+            <><View style={styles.cadastroAtividade}>
+                <View style={styles.campo}>
+                    <Text style={styles.tipoAtividade}>{tipoAtividade}</Text>
+                    <Text style={styles.texto}>{descricao}
                     </Text>
-                    <Text style={styles.texto}>Local da atividade
+                    <Text style={styles.texto}>{local}
                     </Text>
-                    <Text style={styles.texto}>Data e hora da entrega
-                    </Text><Text style={styles.texto}>Status de pendência
+                    <Text style={styles.texto}>{data}
+                    </Text><Text style={styles.texto}>{statusAtividade}
                     </Text>
                 </View>
             </View>
-            <TouchableOpacity style={styles.botaoVoltar}
-                onPress={() => navigation.navigate('Activity')}>
-                <Text style={styles.legendaCadastro}>Voltar</Text>
-            </TouchableOpacity>
-            ))
+                <TouchableOpacity style={styles.botaoVoltar}
+                    onPress={() => navigation.navigate('Activity')}>
+                    <Text style={styles.legendaCadastro}>Voltar</Text>
+                </TouchableOpacity>
+            </>
         </View>
     );
 }
@@ -38,9 +74,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        //justifyContent: 'center',
         //marginTop: 10
-    },
+    },    
     tipoAtividade: {
         //color: "white",
         fontSize: 20,

@@ -6,15 +6,24 @@ import { RootTabScreenProps } from '../types';
 import {
   createTable,
   deleteActivity,
+  getActivityById,
   GetAllActivities,
 } from '../services/ActivityDatabaseService';
 
+
+
 export default function ActivityScreen({ navigation }: RootTabScreenProps<'Activity'>) {
-  const [selectedValue, setSelectedValue] = useState("JavaScript");
+  const [selectedValue, setSelectedValue] = useState("0");
   const [descricao, setDescricao] = useState("");
   const [atividades, setAtividades] = useState([]);
   const [recarregaTela, setRecarregaTela] = useState(true);
   const [criarTabela, setCriarTabela] = useState(false);
+
+  function redirectToEditActivity(id: number) {
+    navigation.navigate('ActivityEdit', {
+      itemId: id,
+    })
+  }
 
   async function processamentoUseEffect() {
     if (!criarTabela) {
@@ -35,12 +44,23 @@ export default function ActivityScreen({ navigation }: RootTabScreenProps<'Activ
     }, [recarregaTela]);
 
   async function carregaDados() {
-    try {      
-      let atividades : any = await GetAllActivities();      
+    try {
+      let atividades: any = await GetAllActivities();
+      console.log(atividades)
       setAtividades(atividades);
       setRecarregaTela(false);
     } catch (e) {
       Alert.alert("e.toString()");
+    }
+  }
+
+  async function carregaDado(identificador: any) {
+    try {
+      let atividades: any = await getActivityById(identificador);
+      console.log(atividades)
+      setRecarregaTela(false);
+    } catch (e: any) {
+      Alert.alert(e.toString());
     }
   }
 
@@ -65,16 +85,17 @@ export default function ActivityScreen({ navigation }: RootTabScreenProps<'Activ
       //limparCampos();
       setRecarregaTela(true);
       Alert.alert('Contato apagado com sucesso!!!');
-    } catch (e) {
+    } catch (e: any) {
       Alert.alert(e);
     }
   }
   return (
+
     <View style={styles.container}>
-      
+
       <View style={styles.areaFiltro}>
         <View style={styles.areaTituloFiltro}>
-          <Text style={styles.tituloFiltro}>Filtro</Text>          
+          <Text style={styles.tituloFiltro}>Filtro</Text>
         </View>
         <View style={styles.areaConteudoFiltro}>
           <View style={styles.areaStatus}>
@@ -82,11 +103,12 @@ export default function ActivityScreen({ navigation }: RootTabScreenProps<'Activ
             <Picker
               selectedValue={selectedValue}
               style={styles.dropDown}
-            //onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
+              onValueChange={(itemValue: any, itemIndex) => setSelectedValue(itemValue)}
             >
               <Picker.Item label="Selecione um status" value="0" />
-              <Picker.Item label="Java" value="Java" />
-              <Picker.Item label="JavaScript" value="JavaScript" />
+              <Picker.Item label="Pendente" value="1" />
+              <Picker.Item label="Concluído" value="2" />
+              <Picker.Item label="Todos" value="3" />
             </Picker>
 
           </View>
@@ -99,7 +121,7 @@ export default function ActivityScreen({ navigation }: RootTabScreenProps<'Activ
       </View>
       <ScrollView style={styles.listaAtividades}>
         {
-          atividades.map((atividade, index) => (
+          atividades.map((atividade: any, index) => (
             <><View style={styles.areaAtividade} key={index.toString()}>
               <Text style={styles.tituloAtividade}>{atividade.tipoAtividade}</Text>
               <Text style={styles.legendaAtividade}>{atividade.descricao} Descrição da atividade</Text>
@@ -109,15 +131,15 @@ export default function ActivityScreen({ navigation }: RootTabScreenProps<'Activ
               </View>
               <View style={styles.areaBotoes}>
                 <TouchableOpacity style={styles.botaoEditar}
-                  onPress={() => navigation.navigate('ActivityEdit')}>
+                  onPress={() => navigation.navigate('ActivityEdit', atividade.id)}>
                   <Text style={styles.legendaCadastro}>Editar</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.botaoExcluir}
-                onPress={() => removerElemento(atividade.id)}>
+                  onPress={() => removerElemento(atividade.id)}>
                   <Text style={styles.legendaCadastro}>Excluir</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.botaoInfo}
-                  onPress={() => navigation.navigate('ActivityDetail')}>
+                  onPress={() => navigation.navigate('ActivityDetail', atividade.id)}>
                   <Text style={styles.legendaCadastro}>Info</Text>
                 </TouchableOpacity>
               </View>

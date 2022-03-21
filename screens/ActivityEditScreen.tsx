@@ -1,18 +1,93 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Alert, Keyboard, Platform, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-community/picker';
+import { useEffect, useState } from 'react';
+import { Alert, Keyboard,  Platform, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
+import { getActivityById, insertActivity } from '../services/ActivityDatabaseService';
 import { RootTabScreenProps } from '../types';
 
-export default function CreateScreen({ navigation }: RootTabScreenProps<'Activity'>) {
+export default function EditScreen({ navigation, route }: RootTabScreenProps<'ActivityEdit'>) {    
+    let itemId = route.params
+    console.log("EditScreen "+ itemId)
     const [id, setId] = useState();
     const [descricao, setDescricao] = useState("");
     const [local, setLocal] = useState("");
     const [tipoAtividade, setTipoAtividade] = useState("");
     const [data, setData] = useState("");
     const [statusAtividade, setStatusAtividade] = useState("");
+    const [selectedValue, setSelectedValue] = useState("JavaScript");
+    const [atividades, setAtividades] = useState([]);
+    const [recarregaTela, setRecarregaTela] = useState(true);
+
+    async function processamentoUseEffect() {
+        if (recarregaTela) {
+            //console.log("Recarregando dados...");
+            await carregaDados(itemId);
+        }
+    }
+
+    useEffect(
+        () => {
+            //console.log('executando useffect');
+            processamentoUseEffect(); //necessário método pois aqui não pode utilizar await...
+        }, [recarregaTela]);
+
+    async function carregaDados(identificador: any) {
+        try {
+            console.log(identificador)
+            let atividades: any = await getActivityById(identificador);
+            setAtividades(atividades);
+            setDescricao(atividades[0].descricao)
+            setLocal(atividades[0].local)
+            setTipoAtividade(atividades[0].tipoAtividade)
+            setData(atividades[0].data) 
+            setStatusAtividade(atividades[0].statusAtividade)
+            setRecarregaTela(true);
+        } catch (e: any) {
+            Alert.alert(e.toString());
+        }
+    }
+
+    async function salvaDados() {
+        let novoRegistro = false;
+        let identificador = id;
+
+        if (!identificador) {
+            identificador = createUniqueId();
+            novoRegistro = true;
+        }
+
+        let obj = {
+            id: identificador,
+            descricao: descricao,
+            local: local,
+            tipoAtividade: tipoAtividade,
+            data: data,
+            statusAtividade: statusAtividade,
+        };
+        try {
+            if (novoRegistro) {
+                let resposta = (await insertActivity(obj));
+                if (resposta) {
+                    Alert.alert('Registro Adicionado!');
+                }
+                else {
+                    Alert.alert('Erro ao adicionar registro!');
+                }
+            }
+            else {
+                Alert.alert('Atividade já existe!');
+            }
+
+            Keyboard.dismiss();
+            //carregaDados();
+            //navigation.navigate('Activity')
+        } catch (e) {
+            Alert.alert("erro");
+        }
+    }
     
     return (
         <View style={styles.container}>
@@ -29,19 +104,27 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
                 </View>
                 <View style={styles.campo}>
                     <Text style={styles.texto}>Tipo de Atividade</Text>
-                    <TextInput
+                    <Picker
+                        selectedValue={tipoAtividade}
                         style={styles.dropDown}
-                        onChangeText={(texto) => setTipoAtividade(texto)}
-                        value={tipoAtividade}
-                    />
+                        onValueChange={(itemValue : any, itemIndex) => setTipoAtividade(itemValue)}
+                    >
+                        <Picker.Item label="Selecione o Tipo da Atividade" value="0" />
+                        <Picker.Item label="N1" value="1" />
+                        <Picker.Item label="N2" value="2" />
+                    </Picker>
                 </View>
                 <View style={styles.campo}>
                     <Text style={styles.texto}>Local da Atividade</Text>
-                    <TextInput
+                    <Picker
+                        selectedValue={local}
                         style={styles.dropDown}
-                        onChangeText={(texto) => setLocal(texto)}
-                        value={local}
-                    />
+                        onValueChange={(itemValue  : any, itemIndex2) => setLocal(itemValue)}
+                    >
+                        <Picker.Item label="Selecione o Local da Atividade" value="0" />
+                        <Picker.Item label="Sala" value="1" />
+                        <Picker.Item label="Laboratório" value="2" />
+                    </Picker>
                 </View>
                 <View style={styles.campo}>
                     <Text style={styles.texto}>Data de Entrega</Text>
@@ -54,17 +137,21 @@ export default function CreateScreen({ navigation }: RootTabScreenProps<'Activit
 
                 <View style={styles.campo}>
                     <Text style={styles.texto}>Status</Text>
-                    <TextInput
+                    <Picker
+                        selectedValue={statusAtividade}
                         style={styles.dropDown}
-                        onChangeText={(texto) => setStatusAtividade(texto)}
-                        value={statusAtividade}
-                    />
+                        onValueChange={(itemValue  : any, itemIndex) => setStatusAtividade(itemValue)}
+                    >
+                        <Picker.Item label="Selecione o Status da Atividade" value="0" />
+                        <Picker.Item label="Pendente" value="1" />
+                        <Picker.Item label="Concluído" value="2" />
+                    </Picker>
                 </View>
 
 
                 <View style={styles.areaBotoes}>
                     <TouchableOpacity style={styles.botaoSalvar}
-                        >
+                        onPress={() => salvaDados()}>
                         <Text style={styles.legendaCadastro}>Salvar</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.botaoVoltar}
@@ -146,7 +233,7 @@ const styles = StyleSheet.create({
         height: 50,
         borderWidth: 1,
         fontSize: 20,
-        backgroundColor: 'black',
+        //backgroundColor: 'black',
         paddingHorizontal: 10,
         width: "100%",
         textAlignVertical: "center",
