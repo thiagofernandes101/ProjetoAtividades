@@ -1,5 +1,5 @@
 export class ActivityModel {
-    constructor(id: number, activityDescription: string, activityType: string, activityPremise: string, committalDate: string, committalHour: string, activityStatus: number) {
+    constructor(id: number, activityDescription: string, activityType: string, activityPremise: string, committalDate: string, committalHour: string, activityStatus: number, activityTypeDescription: string = "") {
         this.id = id;
         this.activityDescription = activityDescription;
         this.activityType = activityType;
@@ -7,6 +7,7 @@ export class ActivityModel {
         this.committalDate = committalDate;
         this.committalHour = committalHour;
         this.activityStatus = activityStatus;
+        this.activityTypeDescription = activityTypeDescription;
     }
 
     public id: number;
@@ -16,4 +17,5 @@ export class ActivityModel {
     public committalDate: string;
     public committalHour: string;
     public activityStatus: number;
+    public activityTypeDescription: string;
 }

@@ -18,9 +18,13 @@ export type RootStackParamList = {
   Modal: undefined;
   NotFound: undefined;
   ActivityType: undefined;
+  Activity: undefined;
   CreateNewActivityType: undefined;
   EdityActivityType: {itemId: number};
-  ActivityTypeDetails: {itemId: number}
+  ActivityTypeDetails: {itemId: number};
+  ActivityCreate: undefined;
+  ActivityDetail: { itemId: number };
+  ActivityEdit: { itemId: number };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<
@@ -31,6 +35,9 @@ export type RootStackScreenProps<Screen extends keyof RootStackParamList> = Nati
 export type RootTabParamList = {
   Activity: undefined;
   ActivityType: undefined;
+  ActivityCreate: undefined;
+  ActivityDetail: { itemId: number };
+  ActivityEdit: { itemId: number };
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> = CompositeScreenProps<

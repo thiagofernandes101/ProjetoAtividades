@@ -21,6 +21,9 @@ import LinkingConfiguration from './LinkingConfiguration';
 import CreateNewActivityTypeScreen from '../screens/CreateNewActivityTypeScreen';
 import EditActivityTypeScreen from '../screens/EditActivityType';
 import ActivityTypeDetails from '../screens/ActivityTypeDetails';
+import CreateScreen from '../screens/ActivityCreateScreen';
+import DetailScreen from '../screens/ActivityDetailScreen';
+import EditScreen from '../screens/ActivityEditScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -46,6 +49,9 @@ function RootNavigator() {
       <Stack.Screen name="CreateNewActivityType" component={CreateNewActivityTypeScreen} options={{ title: 'Criar tipo de atividade' }} />
       <Stack.Screen name="EdityActivityType" component={EditActivityTypeScreen} options={{title: 'Editar tipo de atividade'}} />
       <Stack.Screen name="ActivityTypeDetails" component={ActivityTypeDetails} options={{title: 'Detalhes do tipo de atividade'}} />
+      <Stack.Screen name="ActivityCreate" component={CreateScreen} options={{ title: 'Criar de Atividades' }}/>
+      <Stack.Screen name="ActivityDetail" component={DetailScreen} options={{ title: 'Detalhes da Atividade' }}/>
+      <Stack.Screen name="ActivityEdit" component={EditScreen} options={{ title: 'Alteração da Atividade' }}/>
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
