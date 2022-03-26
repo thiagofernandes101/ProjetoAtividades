@@ -14,13 +14,14 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import ActivityScreen from '../screens/ActivityScreen';
-import ActivityTypeScreen from '../screens/ActivityTypeScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
-import CreateNewActivityTypeScreen from '../screens/CreateNewActivityTypeScreen';
-import EditActivityTypeScreen from '../screens/EditActivityType';
-import ActivityTypeDetails from '../screens/ActivityTypeDetails';
+
+import ActivityScreen from '../screens/ActivityScreens/ActivityScreen';
+import ActivityTypeScreen from '../screens/ActivityTypeScreens/ActivityTypeScreen';
+import CreateNewActivityTypeScreen from '../screens/ActivityTypeScreens/CreateNewActivityTypeScreen';
+import EditActivityTypeScreen from '../screens/ActivityTypeScreens/EditActivityType';
+import ActivityTypeDetails from '../screens/ActivityTypeScreens/ActivityTypeDetails';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -46,9 +47,6 @@ function RootNavigator() {
       <Stack.Screen name="CreateNewActivityType" component={CreateNewActivityTypeScreen} options={{ title: 'Criar tipo de atividade' }} />
       <Stack.Screen name="EdityActivityType" component={EditActivityTypeScreen} options={{title: 'Editar tipo de atividade'}} />
       <Stack.Screen name="ActivityTypeDetails" component={ActivityTypeDetails} options={{title: 'Detalhes do tipo de atividade'}} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
     </Stack.Navigator>
   );
 }

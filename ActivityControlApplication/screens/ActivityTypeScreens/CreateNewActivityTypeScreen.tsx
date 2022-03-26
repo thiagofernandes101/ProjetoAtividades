@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, ScrollView, TextInput, Button } from 'react-native';
-import { Text, View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
-import { ActivityTypeModel } from '../models/ActivityTypeModel';
-import ActivityTypeDatabaseService from "../services/ActivityTypeDatabaseService";
+import { Text, View } from '../../components/Themed';
+import { RootTabScreenProps } from '../../types';
+import { ActivityTypeModel } from '../../models/ActivityTypeModel';
+import ActivityTypeDatabaseService from "../../services/ActivityTypeDatabaseService";
 
 export default function CreateNewActivityScreen({ navigation }: RootTabScreenProps<'ActivityType'>) {
   const [typeOfActivity, setTypeOfActivity] = useState("");

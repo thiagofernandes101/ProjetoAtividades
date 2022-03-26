@@ -7,10 +7,6 @@ const table = 'ActivityType';
 const database = DatabaseConnection.getConnection();
 
 export default class ActivityTypeDatabaseService {
-    static async createTable() {
-        await new DatabaseMigration;
-    }
-
     static addData(param: ActivityTypeModel) {
         return new Promise((resolve, reject) => database.transaction(
             command => {

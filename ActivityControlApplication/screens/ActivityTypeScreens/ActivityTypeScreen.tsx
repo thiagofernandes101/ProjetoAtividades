@@ -1,11 +1,12 @@
 import { StyleSheet, Pressable, ScrollView, Alert } from 'react-native';
-import { Text, View } from '../components/Themed';
-import { RootTabScreenProps } from '../types';
+import { Text, View } from '../..//components/Themed';
+import { RootTabScreenProps } from '../..//types';
 import { FontAwesome } from '@expo/vector-icons';
 
-import { ActivityTypeModel } from '../models/ActivityTypeModel';
-import ActivityTypeDatabaseService from "../services/ActivityTypeDatabaseService";
+import { ActivityTypeModel } from '../../models/ActivityTypeModel';
+import ActivityTypeDatabaseService from "../../services/ActivityTypeDatabaseService";
 import { useEffect, useState } from 'react';
+import { activityTypeController } from '../../controllers/ActivityTypeController';
 
 export default function ActivityTypeScreen({ navigation }: RootTabScreenProps<'ActivityType'>) {
   let activitiesTypesInitialState: ActivityTypeModel[] = [];
@@ -14,23 +15,12 @@ export default function ActivityTypeScreen({ navigation }: RootTabScreenProps<'A
   const [reloadActivityTypeScreen, setReloadActivityTypeScreen] = useState(true);
   const [createTable, setCreateTable] = useState(false);
 
-  function redirectToEditActivityTypeScreen(id: number) {
-    navigation.navigate('EdityActivityType', {
-      itemId: id,
-    });
-  }
-
   useEffect(() => {
     navigation.addListener('focus', () => setReloadActivityTypeScreen(!reloadActivityTypeScreen));
     useEffectProcessing();
   }, [reloadActivityTypeScreen]);
 
   async function useEffectProcessing() {
-    if (!createTable) {
-      setCreateTable(true);
-      ActivityTypeDatabaseService.createTable();
-    }
-
     if (reloadActivityTypeScreen) {
       await loadActivitiesTypes();
     }
@@ -38,48 +28,31 @@ export default function ActivityTypeScreen({ navigation }: RootTabScreenProps<'A
 
   async function loadActivitiesTypes() {
     try {
-      let activityType = await findAllActivitiesTypes();
+      let activityType = await activityTypeController.findAllActivitiesTypes();
       setActivitiesTypes(activityType);
       setReloadActivityTypeScreen(false);
     }
     catch (error) {
       console.log(error);
-      Alert.alert("Ocorreu um erro ao carregar os tipos de atividades. Verifique o log");
+      Alert.alert("Erro", "Ocorreu um erro ao carregar os tipos de atividades. Verifique o log");
     }
   }
 
-  async function findAllActivitiesTypes() {
-    let activitiesTypes: ActivityTypeModel[] = await ActivityTypeDatabaseService.findAll();
-    return activitiesTypes
-  }
-
   async function RemoveActivityType(id: number) {
-    Alert.alert("Cuidado", "Deseja excluir o registro?",
+    Alert.alert("Atenção", "Deseja excluir o registro?",
       [
         {
           text: 'Sim',
-          onPress: () => deleteActivityType(id),
+          onPress: () => {
+            activityTypeController.deleteActivityType(id);
+            setReloadActivityTypeScreen(true);
+          },
         },
         {
           text: 'Não',
           style: 'cancel'
         }
       ])
-  }
-
-  async function deleteActivityType(id: number) {
-    try {
-      let isItemDeleted = await ActivityTypeDatabaseService.deleteActivityType(id);
-
-      if (isItemDeleted == true) {
-        Alert.alert("Registro excluído com sucesso");
-        setReloadActivityTypeScreen(true);
-      }
-    }
-    catch (error) {
-      console.log(error);
-      Alert.alert("Ocorreu um erro ao excluir o tipo de atividade. Consulte o log.");
-    }
   }
 
   return (
@@ -99,7 +72,7 @@ export default function ActivityTypeScreen({ navigation }: RootTabScreenProps<'A
 
                 <View style={[styles.cardActionComponentDirection]}>
                   <Pressable style={[styles.cardActionButton, styles.editActivityTypeButton, styles.shadowComponent]}
-                    onPress={() => redirectToEditActivityTypeScreen(activityType.id)}>
+                    onPress={() => navigation.navigate('EdityActivityType', { itemId: activityType.id })}>
                     <Text style={styles.buttonText}>
                       <FontAwesome name="edit" size={20} color="#FFFFFF" />
                     </Text>

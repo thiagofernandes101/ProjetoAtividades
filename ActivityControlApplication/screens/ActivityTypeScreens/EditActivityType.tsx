@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Alert, Pressable, StyleSheet, ScrollView, TextInput, Button } from 'react-native';
-import { Text, View } from '../components/Themed';
-import { RootTabScreenProps, RootStackScreenProps } from '../types';
-import { ActivityTypeModel } from '../models/ActivityTypeModel';
-import ActivityTypeDatabaseService from "../services/ActivityTypeDatabaseService";
+import { Text, View } from '../../components/Themed';
+import { RootTabScreenProps, RootStackScreenProps } from '../../types';
+import { ActivityTypeModel } from '../../models/ActivityTypeModel';
+import ActivityTypeDatabaseService from "../../services/ActivityTypeDatabaseService";
 
 export default function EdityActivityType({ navigation, route }: RootStackScreenProps<'EdityActivityType'>) {
     let { itemId } = route.params;
